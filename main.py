@@ -1,34 +1,65 @@
 import pygame
-from player import Player
+import sys
+from constants import *
+from player import *
+from asteroid import *
+from asteriodfield import *
 
-# Constants for screen dimensions
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-# Player constants
-PLAYER_RADIUS = 20
+group_updatable = pygame.sprite.Group()
+group_drawable = pygame.sprite.Group()
+group_asteroids = pygame.sprite.Group()
+group_shots = pygame.sprite.Group()
+
 def main():
-    pygame.init()  # Initialize Pygame
-    player = Player(x = SCREEN_WIDTH / 2,y = SCREEN_HEIGHT / 2, radius=PLAYER_RADIUS) # Initialize the player object
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # Set up the display
-    clock= pygame.time.Clock()
-    dt=0
-    running = True  # Variable to control the main loop
+    pygame.init()
+    print("Starting asteroids!")
+    print(f"Screen width: {SCREEN_WIDTH}")
+    print(f"Screen height: {SCREEN_HEIGHT}")
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    clock = pygame.time.Clock()
+    dt = 0
+    
+    #asteroid = Asteroid()
+    
+    Player.containers = (group_updatable, group_drawable)
+    player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
 
-    while running:
-        for event in pygame.event.get():  # Event handling
-            if event.type == pygame.QUIT:  # Quit the game if the "close" button is pressed
-                running = False
-        
-        # Update game state here
+    Asteroid.containers = (group_drawable, group_updatable, group_asteroids)
 
-        screen.fill((0, 0, 0))  # Fill the screen with black color
-        player.update(dt)
-        # Draw everything here
-        player.draw(screen)
-        pygame.display.flip()  # Update the display
+    AsteroidField.containers = (group_updatable)
+    asteroidField = AsteroidField()
+    
+    Shot.containers = (group_shots)
+
+
+    gameRunning = True
+    while gameRunning:
+        ### events
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+        for updatable in group_updatable:
+            updatable.update(dt)
+
+        for asteroid in group_asteroids:
+            if asteroid.isColliding(player):
+                print("Game over!")
+                sys.exit()
+            for shot in group_shots:
+                if asteroid.isColliding(shot):
+                    asteroid.split()
+                    shot.kill()
+
+        ### rendering
+        screen.fill(color = (0,0,0))
+        for drawable in group_drawable:
+            drawable.draw(screen)
+        for shot in group_shots:
+            shot.draw(screen)
+            shot.update(dt)
+            
+        pygame.display.flip()
         dt = clock.tick(60) / 1000
 
-    pygame.quit()  # Clean up and exit Pygame
-    
 if __name__ == "__main__":
     main()
