@@ -32,8 +32,13 @@ def main():
     Shot.containers = (group_shots)
 
 
-    gameRunning = True
-    while gameRunning:
+
+    ######### Setting Background Color 
+    background_color=void
+    ######### Setting Ship Color
+
+    Running = True
+    while Running:
         ### events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -51,7 +56,7 @@ def main():
                     shot.kill()
 
         ### rendering
-        screen.fill(color = (0,0,0))
+        screen.fill(background_color)
         for drawable in group_drawable:
             drawable.draw(screen)
         for shot in group_shots:

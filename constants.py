@@ -13,3 +13,11 @@ PLAYER_SHOOT_SPEED = 500
 PLAYER_SHOOT_CONSTANT = 0.3
 
 SHOT_RADIUS = 5
+
+# Define colors (RGB format)
+white = (255, 255, 255)
+black = (0, 0, 0)
+red = (255, 0, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+void =(48, 25, 52)
